@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GLACETEK™ — Vente en Gros</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root {
+    --ice: #c8eeff;
+    --deep: #0a1628;
+    --frost: #e8f7ff;
+    --cold: #4db8ff;
+    --arctic: #00d4ff;
+    --steam: rgba(200,238,255,0.12);
+    --gold: #ffd700;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--deep);
+    color: var(--frost);
+    font-family: 'DM Mono', monospace;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 20% 50%, rgba(0,212,255,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(77,184,255,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 60% 80%, rgba(0,100,180,0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Ice crystals */
+  .crystals {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .crystal {
+    position: absolute;
+    color: var(--cold);
+    opacity: 0.06;
+    font-size: 2rem;
+    animation: drift linear infinite;
+  }
+
+  @keyframes drift {
+    from { transform: translateY(-10%) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.08; }
+    90% { opacity: 0.08; }
+    to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+  }
+
+  header {
+    position: relative;
+    z-index: 10;
+    padding: 2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(77,184,255,0.2);
+    backdrop-filter: blur(10px);
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2.2rem;
+    letter-spacing: 0.15em;
+    color: var(--arctic);
+    text-shadow: 0 0 30px rgba(0,212,255,0.5);
+  }
+
+  .logo span { color: var(--gold); }
+
+  .badge {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    border: 1px solid var(--cold);
+    padding: 0.3rem 0.8rem;
+    color: var(--cold);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 rgba(0,212,255,0); }
+    50% { opacity: 0.7; box-shadow: 0 0 15px rgba(0,212,255,0.3); }
+  }
+
+  .hero {
+    position: relative;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    padding: 5rem 3rem 3rem;
+    align-items: center;
+    min-height: 90vh;
+  }
+
+  .hero-text { }
+
+  .eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--arctic);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .eyebrow::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--arctic);
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(3.5rem, 6vw, 6rem);
+    line-height: 0.95;
+    letter-spacing: 0.03em;
+    color: var(--frost);
+    margin-bottom: 1rem;
+  }
+
+  h1 .highlight {
+    color: var(--arctic);
+    text-shadow: 0 0 40px rgba(0,212,255,0.6);
+  }
+
+  .tagline {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--cold);
+    opacity: 0.8;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+  }
+
+  .specs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .spec-item {
+    border: 1px solid rgba(77,184,255,0.2);
+    padding: 1rem;
+    background: var(--steam);
+    backdrop-filter: blur(5px);
+    transition: border-color 0.3s;
+  }
+  .spec-item:hover { border-color: var(--arctic); }
+
+  .spec-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--cold);
+    margin-bottom: 0.3rem;
+    opacity: 0.7;
+  }
+
+  .spec-value {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--frost);
+  }
+
+  .warning-box {
+    border: 1px solid var(--gold);
+    padding: 1rem 1.2rem;
+    background: rgba(255,215,0,0.05);
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
+  }
+
+  .warning-icon { color: var(--gold); font-size: 1.2rem; flex-shrink: 0; }
+
+  .warning-text {
+    font-size: 0.7rem;
+    line-height: 1.6;
+    color: rgba(255,215,0,0.8);
+    letter-spacing: 0.02em;
+  }
+
+  .cta-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: var(--arctic);
+    color: var(--deep);
+    border: none;
+    padding: 1rem 2rem;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .btn-primary:hover {
+    background: var(--cold);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0,212,255,0.3);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--arctic);
+    border: 1px solid var(--arctic);
+    padding: 1rem 2rem;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover {
+    background: rgba(0,212,255,0.1);
+  }
+
+  /* Product visual */
+  .product-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .kettle-container {
+    position: relative;
+    width: 280px;
+    height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .kettle-glow {
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,212,255,0.15) 0%, transparent 70%);
+    animation: glow 3s ease-in-out infinite;
+  }
+
+  @keyframes glow {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.2); opacity: 1; }
+  }
+
+  .kettle-svg {
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 20px 40px rgba(0,212,255,0.3));
+    animation: float 4s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  /* Ice drip animation */
+  .drip {
+    position: absolute;
+    bottom: 20px;
+    width: 4px;
+    background: linear-gradient(to bottom, rgba(200,238,255,0.8), transparent);
+    border-radius: 2px;
+    animation: drip 2.5s ease-in infinite;
+  }
+
+  @keyframes drip {
+    0% { height: 0; opacity: 0; bottom: 120px; }
+    30% { opacity: 1; }
+    100% { height: 60px; opacity: 0; bottom: 20px; }
+  }
+
+  .price-card {
+    width: 100%;
+    max-width: 320px;
+    border: 1px solid rgba(77,184,255,0.3);
+    padding: 1.5rem;
+    background: var(--steam);
+    backdrop-filter: blur(10px);
+  }
+
+  .price-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--cold);
+    margin-bottom: 0.5rem;
+  }
+
+  .price-tiers {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 1rem;
+  }
+
+  .tier {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.8rem;
+    border: 1px solid rgba(77,184,255,0.1);
+    font-size: 0.8rem;
+  }
+  .tier.best {
+    border-color: var(--arctic);
+    background: rgba(0,212,255,0.08);
+  }
+
+  .tier-qty { color: rgba(200,238,255,0.6); }
+  .tier-price { color: var(--frost); font-weight: 500; }
+  .tier-best { font-size: 0.5rem; letter-spacing: 0.2em; color: var(--arctic); text-transform: uppercase; }
+
+  /* QR section */
+  .qr-section {
+    position: relative;
+    z-index: 10;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    border-top: 1px solid rgba(77,184,255,0.15);
+  }
+
+  .qr-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.8rem;
+    letter-spacing: 0.1em;
+    color: var(--cold);
+    text-align: center;
+  }
+
+  .qr-wrapper {
+    display: flex;
+    gap: 4rem;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .qr-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  #qrcode {
+    padding: 12px;
+    background: white;
+    border: 3px solid var(--arctic);
+    box-shadow: 0 0 30px rgba(0,212,255,0.4);
+  }
+
+  .qr-caption {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--cold);
+    text-align: center;
+    opacity: 0.7;
+  }
+
+  .contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    max-width: 280px;
+  }
+
+  .contact-row {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    font-size: 0.8rem;
+  }
+
+  .contact-icon { color: var(--arctic); width: 20px; text-align: center; }
+  .contact-val { color: rgba(200,238,255,0.7); }
+
+  footer {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 2rem;
+    border-top: 1px solid rgba(77,184,255,0.1);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: rgba(200,238,255,0.3);
+  }
+
+  .disclaimer {
+    margin-top: 0.5rem;
+    font-size: 0.55rem;
+    color: rgba(200,238,255,0.2);
+  }
+
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; min-height: auto; gap: 2rem; padding: 3rem 1.5rem; }
+    header { padding: 1.2rem 1.5rem; }
+    .qr-section { padding: 2rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Ice crystals background -->
+<div class="crystals" id="crystals"></div>
+
+<header>
+  <div class="logo">GLACE<span>TEK</span>™</div>
+  <div style="display:flex;gap:1rem;align-items:center">
+    <div class="badge">Vente en Gros</div>
+    <div class="badge" style="border-color:var(--gold);color:var(--gold)">B2B</div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-text">
+    <div class="eyebrow">Innovation révolutionnaire · Depuis 2024</div>
+    <h1>
+      La <span class="highlight">Bouilloire</span><br>
+      En <span class="highlight">Glace</span>™
+    </h1>
+    <p class="tagline">Quand le froid rencontre l'eau bouillante.<br>Le résultat vous surprendra. Beaucoup.</p>
+
+    <div class="specs-grid">
+      <div class="spec-item">
+        <div class="spec-label">Matériau</div>
+        <div class="spec-value">Glace pure H₂O</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-label">Durée de vie</div>
+        <div class="spec-value">~4 secondes*</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-label">Capacité</div>
+        <div class="spec-value">Théoriquement 1.5L</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-label">Certificat</div>
+        <div class="spec-value">Physique de base</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-label">Poids</div>
+        <div class="spec-value">1.4 kg (décroissant)</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-label">Couleur</div>
+        <div class="spec-value">Transparent → eau</div>
+      </div>
+    </div>
+
+    <div class="warning-box">
+      <span class="warning-icon">⚠</span>
+      <div class="warning-text">
+        <strong>NOTE IMPORTANTE POUR LES GROSSISTES :</strong> Le produit peut présenter une légère
+        perte de forme lors de la mise en chauffe. La fonte totale dans les 3 à 8 secondes suivant
+        l'utilisation est une <em>fonctionnalité</em>, pas un défaut. Stockage recommandé : −18°C.
+        Ne pas laisser à température ambiante plus de 40 minutes avant la vente.
+      </div>
+    </div>
+
+    <div class="cta-row">
+      <button class="btn-primary" onclick="alert('Commande passée ! Livraison estimée: avant qu\'elle fonde.')">Commander en gros</button>
+      <button class="btn-secondary" onclick="alert('Brochure en cours d\'impression... sur glace.')">Télécharger la brochure</button>
+    </div>
+  </div>
+
+  <div class="product-visual">
+    <!-- SVG Kettle made of "ice" -->
+    <div class="kettle-container">
+      <div class="kettle-glow"></div>
+      <svg class="kettle-svg" width="200" height="240" viewBox="0 0 200 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Body -->
+        <path d="M55 80 Q50 170 60 200 Q80 220 100 220 Q120 220 140 200 Q150 170 145 80 Z"
+          fill="rgba(180,230,255,0.15)" stroke="rgba(0,212,255,0.7)" stroke-width="2"/>
+        <!-- Ice facets -->
+        <path d="M65 100 L100 90 L135 100 L130 150 L100 160 L70 150 Z"
+          fill="rgba(200,240,255,0.08)" stroke="rgba(0,212,255,0.3)" stroke-width="1"/>
+        <path d="M100 90 L100 160" stroke="rgba(0,212,255,0.2)" stroke-width="1"/>
+        <path d="M65 100 L130 150" stroke="rgba(0,212,255,0.15)" stroke-width="1"/>
+        <path d="M135 100 L70 150" stroke="rgba(0,212,255,0.15)" stroke-width="1"/>
+        <!-- Spout -->
+        <path d="M145 110 Q170 100 175 120 Q178 135 160 140"
+          fill="none" stroke="rgba(0,212,255,0.7)" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Handle -->
+        <path d="M55 110 Q25 110 25 150 Q25 185 55 185"
+          fill="none" stroke="rgba(0,212,255,0.6)" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Lid -->
+        <rect x="65" y="72" width="70" height="14" rx="3"
+          fill="rgba(180,230,255,0.12)" stroke="rgba(0,212,255,0.6)" stroke-width="1.5"/>
+        <rect x="88" y="62" width="24" height="12" rx="6"
+          fill="rgba(180,230,255,0.2)" stroke="rgba(0,212,255,0.8)" stroke-width="1.5"/>
+        <!-- Shine / ice reflection -->
+        <path d="M75 100 Q78 120 74 140" stroke="rgba(255,255,255,0.25)" stroke-width="3" stroke-linecap="round"/>
+        <path d="M85 92 Q86 100 84 108" stroke="rgba(255,255,255,0.2)" stroke-width="2" stroke-linecap="round"/>
+        <!-- Water drips from bottom -->
+        <ellipse cx="100" cy="218" rx="30" ry="5" fill="rgba(0,180,255,0.15)"/>
+      </svg>
+      <!-- Animated drips -->
+      <div class="drip" style="left:80px;animation-delay:0s;animation-duration:2.2s"></div>
+      <div class="drip" style="left:100px;animation-delay:0.8s;animation-duration:3s"></div>
+      <div class="drip" style="left:115px;animation-delay:1.5s;animation-duration:2.5s"></div>
+    </div>
+
+    <!-- Pricing card -->
+    <div class="price-card">
+      <div class="price-label">Tarifs Grossiste (HT)</div>
+      <div style="font-size:0.65rem;color:rgba(200,238,255,0.4);margin-top:0.2rem">* Prix unité hors fonte en transit</div>
+      <div class="price-tiers">
+        <div class="tier">
+          <span class="tier-qty">10 – 49 unités</span>
+          <span class="tier-price">4,90 € / u.</span>
+        </div>
+        <div class="tier">
+          <span class="tier-qty">50 – 199 unités</span>
+          <span class="tier-price">3,50 € / u.</span>
+        </div>
+        <div class="tier best">
+          <span class="tier-qty">200+ unités</span>
+          <span class="tier-price">2,10 € / u.</span>
+          <span class="tier-best">⭐ Meilleur</span>
+        </div>
+        <div class="tier" style="background:rgba(255,215,0,0.04);border-color:rgba(255,215,0,0.2)">
+          <span class="tier-qty" style="color:var(--gold)">Pallet × 500</span>
+          <span class="tier-price" style="color:var(--gold)">1,20 € / u.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QR Code Section -->
+<section class="qr-section">
+  <div class="qr-title">📲 Accédez à notre catalogue complet</div>
+  <div class="qr-wrapper">
+    <div class="qr-box">
+      <div id="qrcode"></div>
+      <div class="qr-caption">Scanner pour commander<br>ou pleurer de rire</div>
+    </div>
+    <div class="contact-info">
+      <div style="font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:0.08em;color:var(--arctic);margin-bottom:0.5rem">Contact Commercial</div>
+      <div class="contact-row">
+        <span class="contact-icon">📧</span>
+        <span class="contact-val">vente@bouilloire-en-glace.fr</span>
+      </div>
+      <div class="contact-row">
+        <span class="contact-icon">📞</span>
+        <span class="contact-val">+33 (0)1 00 00 00 00</span>
+      </div>
+      <div class="contact-row">
+        <span class="contact-icon">🏭</span>
+        <span class="contact-val">Entrepôt réfrigéré, Sibérie (Dpt 75)</span>
+      </div>
+      <div class="contact-row">
+        <span class="contact-icon">🚚</span>
+        <span class="contact-val">Livraison express en camion frigorifique</span>
+      </div>
+      <div class="contact-row">
+        <span class="contact-icon">📦</span>
+        <span class="contact-val">MOQ : 10 unités (ou 1 flaque)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  © 2024 GLACETEK™ Industries — Tous droits réservés · SIRET : 00 000 000 00000
+  <div class="disclaimer">
+    *La durée de vie est indicative et peut varier selon la température ambiante, votre enthousiasme et les lois de la thermodynamique.
+    GlaceTek™ décline toute responsabilité en cas de commande passée en toute connaissance de cause.
+  </div>
+</footer>
+
+<script>
+  // Generate crystals
+  const crystalsEl = document.getElementById('crystals');
+  const shapes = ['❄', '❅', '❆', '✦', '◆', '◇'];
+  for (let i = 0; i < 18; i++) {
+    const el = document.createElement('span');
+    el.className = 'crystal';
+    el.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.top = Math.random() * -20 + 'vh';
+    el.style.fontSize = (1.5 + Math.random() * 3) + 'rem';
+    el.style.animationDuration = (8 + Math.random() * 15) + 's';
+    el.style.animationDelay = (Math.random() * 10) + 's';
+    crystalsEl.appendChild(el);
+  }
+
+  // Generate QR Code
+  new QRCode(document.getElementById("qrcode"), {
+    text: "https://bouilloire-en-glace.fr/catalogue-gros?utm_source=qr&utm_campaign=presentation-farfelue",
+    width: 160,
+    height: 160,
+    colorDark: "#0a1628",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.H
+  });
+</script>
+</body>
+</html>
